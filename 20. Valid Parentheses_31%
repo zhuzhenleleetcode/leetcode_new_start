@@ -1,0 +1,28 @@
+class Solution {
+    public boolean isValid(String s) {
+        if(s.length()%2!=0)return false;
+        Stack<Character> stack = new Stack<Character>();
+        for(int i=0; i<s.length(); i++){
+            char cur=s.charAt(i);
+            if(cur=='('||cur=='{'||cur=='['){
+                stack.push(cur);
+            }else if(!stack.isEmpty()){
+                switch(cur){
+                    case ')':
+                        if(stack.pop()!='(') return false;
+                        break;
+                    case ']':
+                        if(stack.pop()!='[') return false;
+                        break;
+                    case '}':
+                        if(stack.pop()!='{') return false;
+                        break;
+                    default:return false;
+                }
+            }else{
+                return false;
+            }
+        }
+        return stack.isEmpty();
+    }
+}
