@@ -1,0 +1,75 @@
+class TwoSum {
+    ArrayList<Integer> nums;
+    /** Initialize your data structure here. */
+    public TwoSum() {
+        nums=new ArrayList<Integer>();
+    }
+    
+    /** Add the number to an internal data structure.. */
+    public void add(int number) {
+        int i=0;
+        while(i<nums.size()&&number>nums.get(i))i++;
+        nums.add(i, number);
+    }
+    
+    /** Find if there exists any pair of numbers which sum is equal to the value. */
+    public boolean find(int value) {
+        int p1=0;
+        int p2=nums.size()-1;
+        while(p1<p2){
+            int sum=nums.get(p1)+nums.get(p2);
+            if(sum==value){
+                return true;
+            }else if(sum>value){
+                p2--;
+            }else{
+                p1++;
+            }
+        }
+        return false;
+    }
+}
+
+/**
+ * Your TwoSum object will be instantiated and called as such:
+ * TwoSum obj = new TwoSum();
+ * obj.add(number);
+ * boolean param_2 = obj.find(value);
+ */
+ 
+ 
+ 
+ 
+ class TwoSum {
+    HashMap<Integer, Integer> nums;
+    /** Initialize your data structure here. */
+    public TwoSum() {
+        nums=new HashMap<Integer, Integer>();
+    }
+    
+    /** Add the number to an internal data structure.. */
+    public void add(int number) {
+        nums.put(number, nums.getOrDefault(number, 0)+1);
+    }
+    
+    /** Find if there exists any pair of numbers which sum is equal to the value. */
+    public boolean find(int value) {
+        for(int num: nums.keySet()){
+            if(nums.containsKey(value-num)){
+                if(value-num!=num){
+                    return true;
+                }else if(nums.get(num)>1){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+}
+
+/**
+ * Your TwoSum object will be instantiated and called as such:
+ * TwoSum obj = new TwoSum();
+ * obj.add(number);
+ * boolean param_2 = obj.find(value);
+ */
