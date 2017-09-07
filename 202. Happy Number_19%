@@ -1,0 +1,16 @@
+public class Solution {
+    public boolean isHappy(int n) {
+        HashSet<Integer> hash = new HashSet<Integer>();
+        while(n!=1){
+            if(hash.contains(n))return false;
+            hash.add(n);
+            int next=0;
+            while(n!=0){
+                next+=(n%10)*(n%10);
+                n/=10;
+            }
+            n=next;
+        }
+        return true;
+    }
+}
