@@ -1,0 +1,123 @@
+class NumMatrix {
+    
+    class segmentTreeNode2D{
+        int sum;
+        segmentTreeNode2D c1,c2,c3,c4;
+        int row1, col1, row2, col2;
+        public segmentTreeNode2D(int row1, int col1, int row2, int col2){
+            this.row1=row1;
+            this.col1=col1;
+            this.row2=row2;
+            this.col2=col2;
+            this.c1=null;
+            this.c2=null;
+            this.c3=null;
+            this.c4=null;
+            this.sum=0;
+        }
+    }
+    segmentTreeNode2D root;
+    
+    private segmentTreeNode2D buildSegmentTree(int[][] matrix, int row1, int col1, int row2, int col2){
+        if(row2<row1||col2<col1){
+            return null;
+        }
+        segmentTreeNode2D root=new segmentTreeNode2D(row1,col1,row2,col2);
+        if(row1==row2&&col1==col2){
+            root.sum=matrix[row1][col1];
+        }else{
+            int rowMid=row1+(row2-row1)/2;
+            int colMid=col1+(col2-col1)/2;
+            root.c1=buildSegmentTree(matrix, row1, col1, rowMid, colMid);
+            root.c2=buildSegmentTree(matrix, row1, colMid+1, rowMid, col2);
+            root.c3=buildSegmentTree(matrix, rowMid+1, col1, row2, colMid);
+            root.c4=buildSegmentTree(matrix, rowMid+1,colMid+1, row2, col2);
+            if(root.c1!=null)root.sum+=root.c1.sum;
+            if(root.c2!=null)root.sum+=root.c2.sum;
+            if(root.c3!=null)root.sum+=root.c3.sum;
+            if(root.c4!=null)root.sum+=root.c4.sum;
+        }
+        return root;
+    }
+    private void updateSegmentTree(int row, int col, int val, segmentTreeNode2D root){
+        if(row<root.row1||row>root.row2||col<root.col1||col>root.col2)return;
+        if(root.row1==root.row2&&root.col1==root.col2){
+            root.sum=val;
+        }else{
+            int rowMid=root.row1+(root.row2-root.row1)/2;
+            int colMid=root.col1+(root.col2-root.col1)/2;
+            if(row<=rowMid&&col<=colMid){
+                root.sum-=root.c1.sum;
+                updateSegmentTree(row, col, val, root.c1);
+                root.sum+=root.c1.sum;
+            }else if(row<=rowMid){
+                root.sum-=root.c2.sum;
+                updateSegmentTree(row, col, val, root.c2);
+                root.sum+=root.c2.sum;
+            }else if(col<=colMid){
+                root.sum-=root.c3.sum;
+                updateSegmentTree(row, col, val, root.c3);
+                root.sum+=root.c3.sum;
+            }else{
+                root.sum-=root.c4.sum;
+                updateSegmentTree(row, col, val, root.c4);
+                root.sum+=root.c4.sum;
+            }
+        }
+    }
+    
+    private int sumRegion(int row1, int col1, int row2, int col2, segmentTreeNode2D root){
+        if(row1>root.row2||row2<root.row1||col1>root.col2||col2<root.col1){
+            return 0;
+        }
+        if(row1==root.row1&&row2==root.row2&&col1==root.col1&&col2==root.col2){
+            return root.sum;
+        }
+        int rowMid=root.row1+(root.row2-root.row1)/2;
+        int colMid=root.col1+(root.col2-root.col1)/2;
+        if(row2<=rowMid){
+            if(col2<=colMid){
+                return sumRegion(row1,col1,row2,col2, root.c1);
+            }else if(col1>colMid){
+                return sumRegion(row1,col1,row2,col2, root.c2);
+            }else{
+                return sumRegion(row1,col1,row2,colMid, root.c1)+sumRegion(row1,colMid+1,row2,col2, root.c2);
+            }
+        }else if(row1>rowMid){
+            if(col2<=colMid){
+                return sumRegion(row1,col1,row2,col2, root.c3);
+            }else if(col1>colMid){
+                return sumRegion(row1,col1,row2,col2, root.c4);
+            }else{
+                return sumRegion(row1,col1,row2,colMid, root.c3)+sumRegion(row1,colMid+1,row2,col2, root.c4);
+            }            
+        }else{
+            if(col2<=colMid){
+                return sumRegion(row1,col1,rowMid,col2, root.c1)+sumRegion(rowMid+1,col1,row2,col2, root.c3);
+            }else if(col1>colMid){
+                return sumRegion(row1,col1,rowMid,col2, root.c2)+sumRegion(rowMid+1,col1,row2,col2, root.c4);
+            }else{
+                return sumRegion(row1,col1,rowMid,colMid, root.c1)+sumRegion(row1,colMid+1,rowMid,col2, root.c2)+sumRegion(rowMid+1,col1,row2,colMid, root.c3)+sumRegion(rowMid+1,colMid+1,row2,col2, root.c4);
+            }
+        }
+    }
+
+    public NumMatrix(int[][] matrix) {
+        this.root=matrix.length!=0?buildSegmentTree(matrix, 0, 0, matrix.length-1, matrix[0].length-1):null;
+    }
+    
+    public void update(int row, int col, int val) {
+        updateSegmentTree(row, col, val, root);
+    }
+    
+    public int sumRegion(int row1, int col1, int row2, int col2) {
+        return sumRegion(row1, col1, row2, col2, root);
+    }
+}
+
+/**
+ * Your NumMatrix object will be instantiated and called as such:
+ * NumMatrix obj = new NumMatrix(matrix);
+ * obj.update(row,col,val);
+ * int param_2 = obj.sumRegion(row1,col1,row2,col2);
+ */
