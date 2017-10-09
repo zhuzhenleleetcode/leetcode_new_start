@@ -1,0 +1,39 @@
+class Solution {
+    public List<String> generatePalindromes(String s) {
+        int len=s.length();
+        List<String> res = new ArrayList<String>();
+        HashSet<Character> set = new HashSet<Character>();
+        int mid=0;
+        char[] cs = new char[len/2];
+        int j=0;
+        for(int i=0; i<s.length(); i++){
+            char cur = s.charAt(i);
+            mid^=(int)cur;
+            if(set.contains(cur)){
+                set.remove(cur);
+                cs[j]=cur;
+                j++;
+            }else{
+                set.add(cur);
+            }
+        }
+        if(set.size()>1)return res;
+        Arrays.sort(cs);
+        generatePalindromes(cs, mid==0?"":String.valueOf((char)mid), new boolean[len/2], res);
+        return res;
+    }
+    public void generatePalindromes(char[] cs, String palindrome, boolean[] tracking, List<String> res){
+        if(palindrome.length()/2==cs.length){
+            res.add(palindrome);
+            return;
+        }
+        for(int i=0; i<cs.length; i++){
+            if(tracking[i])continue;
+            if(i>0&&!tracking[i-1]&&cs[i-1]==cs[i])continue;
+            tracking[i]=true;
+            generatePalindromes(cs, cs[i]+palindrome+cs[i], tracking, res);
+            tracking[i]=false;
+        }
+    }
+    
+}
