@@ -1,0 +1,25 @@
+class Solution {
+    public List<List<Integer>> permuteUnique(int[] nums) {
+        Arrays.sort(nums);
+        List<List<Integer>> res = new ArrayList<List<Integer>>();
+        permuteUniqueHelper(nums, res, new boolean[nums.length], new ArrayList<Integer>());
+        return res;
+    }
+    public void permuteUniqueHelper(int[] nums, List<List<Integer>> res, boolean[] map, List<Integer> permutation){
+        if(permutation.size()==nums.length){
+            List<Integer> list = new ArrayList<Integer>(permutation);
+            res.add(list);
+            return;
+        }
+        for(int i=0; i<nums.length; i++){
+            if(map[i])continue;
+            if(i>0&&!map[i-1]&&nums[i]==nums[i-1])continue;
+            permutation.add(nums[i]);
+            map[i]=true;
+            permuteUniqueHelper(nums, res, map, permutation);
+            map[i]=false;
+            permutation.remove(permutation.size()-1);
+        }
+        
+    }
+}
