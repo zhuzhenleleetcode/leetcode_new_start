@@ -1,0 +1,58 @@
+class Solution {
+    public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {
+        List<List<String>> res = new ArrayList<>();
+        if(!wordList.contains(endWord))return res;
+        HashMap<String, List<String>> map = new HashMap<String, List<String>>();
+        HashMap<String, Integer> distances = new HashMap<String, Integer>();
+        bfs(beginWord, endWord, wordList, map, distances);
+        dfs(endWord, beginWord, res, new ArrayList<String>(), map, distances);
+        return res;
+    }
+    public void bfs(String beginWord, String endWord, List<String> wordList, HashMap<String, List<String>> map, HashMap<String, Integer> distances){
+        Queue<String> queue = new LinkedList<String>();
+        //map.put(beginWord, new ArrayList<String>());
+        distances.put(beginWord, 0);
+        queue.offer(beginWord);
+        HashSet<String> dictionary = new HashSet<String>();
+        dictionary.addAll(wordList);
+        while(!queue.isEmpty()){
+            String cur = queue.poll();
+            List<String> list = new ArrayList<String>();
+            char[] c= cur.toCharArray();
+            int distance = distances.get(cur);
+            for(int i=0; i<c.length; i++){
+                char org=c[i];
+                for(int j=0; j<26; j++){
+                    c[i]=(char)('a'+j);
+                    String nb=String.valueOf(c);
+                    if(dictionary.contains(nb)){
+                        if(!distances.containsKey(nb)){
+                            distances.put(nb, distance+1);
+                            queue.offer(nb);
+                        }
+                        if(distances.get(nb)==distance+1){
+                            list.add(nb);
+                        }
+                    }
+                }
+                c[i]=org;
+            }
+            map.put(cur, list);
+        }
+    }
+    public void dfs(String endWord, String cur, List<List<String>> res, List<String> ladder, HashMap<String, List<String>> map, HashMap<String, Integer> distances){
+        ladder.add(cur);
+        if(cur.equals(endWord)){
+            List<String> list = new ArrayList<String>(ladder);
+            res.add(list);
+        }else{
+            List<String> nbs = map.get(cur);
+            int distance = distances.get(cur);
+            for(String nb:nbs){
+                if(!(distances.get(nb)==distance+1))continue;
+                dfs(endWord, nb, res, ladder, map, distances);
+            }
+        }
+        ladder.remove(ladder.size()-1);
+    }
+}
