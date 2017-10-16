@@ -1,0 +1,39 @@
+class Solution {
+    public boolean isValidSudoku(char[][] board) {
+        //row
+        for(int i=0; i<9; i++){
+            boolean[] table = new boolean[9];
+            for(int j=0; j<9; j++){
+                if(board[i][j]=='.')continue;
+                int cur=board[i][j]-'1';
+                if(table[cur])return false;
+                table[cur]=true;
+            }
+        }
+        
+        //column
+        for(int i=0; i<9; i++){
+            boolean[] table = new boolean[9];
+            for(int j=0; j<9; j++){
+                if(board[j][i]=='.')continue;
+                int cur=board[j][i]-'1';
+                if(table[cur])return false;
+                table[cur]=true;
+            }
+        }
+        
+        //square
+        for(int i=0; i<9; i++){
+            boolean[] table = new boolean[9];
+            for(int j=0; j<9; j++){
+                int m=(i/3)*3+j/3;
+                int n=(i%3)*3+j%3;
+                if(board[m][n]=='.')continue;
+                int cur=board[m][n]-'1';
+                if(table[cur])return false;
+                table[cur]=true;
+            }
+        }
+        return true;
+    }
+}
